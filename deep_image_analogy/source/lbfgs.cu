@@ -196,7 +196,7 @@ lbfgs::status lbfgs::gpu_lbfgs(float *d_x)
 	CudaSafeCall( cudaMemcpy(d_H0, &one, sizeof(float), cudaMemcpyHostToDevice) );
 
 	size_t it;
-
+	cout<<m_maxIter<<endl;
 	for (it = 0; it < m_maxIter; ++it)
 	{
 #ifdef LBFGS_VERBOSE

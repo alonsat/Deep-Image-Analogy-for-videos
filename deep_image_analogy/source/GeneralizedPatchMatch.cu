@@ -254,7 +254,30 @@ __global__ void upSample_kernel(unsigned int * ann, unsigned int * ann_tmp,int *
 
 }
 
-__global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned int *ann, float *annd, int * params) {
+__global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned int *ann, float *annd, int * params,int doweread,int *m,int optical, int curr_layer,float lambda) {
+	 int ratio=1;
+	switch(curr_layer){
+	case 5:
+	 ratio=1;
+	break;
+	case 4:
+	 ratio=1;
+	break;
+	case 3:
+	 ratio=2;
+	break;
+	case 2:
+	 ratio=4;
+	break;
+	case 1:
+	 ratio=8;
+	break;
+	case 0:
+	 ratio=16;
+	break;
+	deafault:
+	break;
+	}
 
 	int ax = blockIdx.x*blockDim.x + threadIdx.x;
 	int ay = blockIdx.y*blockDim.y + threadIdx.y;
@@ -306,10 +329,23 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 
 					if (yp >= 0 && yp < b_rows && xp >= 0 && xp < b_cols)
 					{
-						//improve guess
-						improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
-						ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
-						annd[ay*a_cols + ax] = dbest;
+						
+						if(optical==1){
+							float diff_y = (float)INT_TO_X(m[ay*ratio*a_cols + ax*ratio]) / (float)ratio  - yp;
+							float diff_x = (float)INT_TO_Y(m[ay *ratio*a_cols + ax*ratio])  / (float)ratio - xp;
+							float rr = lambda*(diff_y*diff_y + diff_x*diff_x);
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, rr);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
+						else{
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
+
 					}
 				}
 				
@@ -321,10 +357,22 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 
 					if (yp >= 0 && yp < b_rows && xp >= 0 && xp < b_cols)
 					{
-						//improve guess
-						improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
-						ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
-						annd[ay*a_cols + ax] = dbest;
+						
+							if(optical==1){
+							float diff_y = (float)INT_TO_X(m[ay*ratio*a_cols + ax*ratio]) / (float)ratio  - yp;
+							float diff_x = (float)INT_TO_Y(m[ay *ratio*a_cols + ax*ratio])  / (float)ratio - xp;
+							float rr = lambda*(diff_y*diff_y + diff_x*diff_x);
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, rr);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
+						else{
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
 					}
 				}
 
@@ -336,10 +384,21 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 					if (yp >= 0 && yp < b_rows && xp >= 0 && xp < b_cols)
 					{
 
-						//improve guess
-						improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
-						ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
-						annd[ay*a_cols + ax] = dbest;
+						if(optical==1){
+							float diff_y = (float)INT_TO_X(m[ay*ratio*a_cols + ax*ratio]) / (float)ratio  - yp;
+							float diff_x = (float)INT_TO_Y(m[ay *ratio*a_cols + ax*ratio])  / (float)ratio - xp;
+							float rr = lambda*(diff_y*diff_y + diff_x*diff_x);
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, rr);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
+						else{
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
 					}
 				}
 
@@ -350,16 +409,29 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 
 					if (yp >= 0 && yp < b_rows && xp >= 0 && xp < b_cols)
 					{
-						//improve guess
-						improve_guess(a, b, a1, b1,  ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
-						ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
-						annd[ay*a_cols + ax] = dbest;
+						if(optical==1){
+							float diff_y = (float)INT_TO_X(m[ay*ratio*a_cols + ax*ratio]) / (float)ratio  - yp;
+							float diff_x = (float)INT_TO_Y(m[ay *ratio*a_cols + ax*ratio])  / (float)ratio - xp;
+							float rr = lambda*(diff_y*diff_y + diff_x*diff_x);
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, rr);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
+						else{
+							//improve guess
+							improve_guess(a, b, a1, b1, ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, 0);
+							ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
+							annd[ay*a_cols + ax] = dbest;
+						}
 					}
 				}
 
 			}
 
 			/* Random search: Improve current guess by searching in boxes of exponentially decreasing size around the current best guess. */
+			//cout<<doweread<<endl;
+			//if(doweread==0){
 			int rs_start = rs_max;
 			if (rs_start > cuMax(b_cols, b_rows)) {
 				rs_start = cuMax(b_cols, b_rows);
@@ -370,11 +442,22 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 				ymin = cuMax(ybest - mag, 0), ymax = cuMin(ybest + mag + 1, b_rows);
 				xp = xmin + (int)(MycuRand(state)*(xmax - xmin)) % (xmax - xmin);
 				yp = ymin + (int)(MycuRand(state)*(ymax - ymin)) % (ymax - ymin);
-
+				if(optical==1){
+							float diff_y = (float)INT_TO_X(m[ay*ratio*a_cols + ax*ratio]) / (float)ratio  - yp;
+							float diff_x = (float)INT_TO_Y(m[ay *ratio*a_cols + ax*ratio])  / (float)ratio - xp;
+							float rr = lambda*(diff_y*diff_y + diff_x*diff_x);
 				//improve guess
+				improve_guess(a, b, a1, b1,  ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, FLT_MIN+rr);
+				}
+				else{
+								//improve guess
 				improve_guess(a, b, a1, b1,  ch, a_rows, a_cols, b_rows, b_cols, ax, ay, xbest, ybest, dbest, xp, yp, patch_w, FLT_MIN);
+				}
+
 
 			}
+			//}
+			
 
 			ann[ay*a_cols + ax] = XY_TO_INT(xbest, ybest);
 			annd[ay*a_cols + ax] = dbest;

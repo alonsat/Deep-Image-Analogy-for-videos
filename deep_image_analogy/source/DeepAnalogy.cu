@@ -80,6 +80,15 @@ DeepAnalogy::~DeepAnalogy(){
 void DeepAnalogy::SetRatio(float ratio){
 	resizeRatio = ratio;
 }
+void DeepAnalogy::SetRead(int read){
+	doweread = read;
+}
+void DeepAnalogy::SetStart(int start){
+	start_layer = start;
+}
+void DeepAnalogy::SetSave(int save){
+	save_layer = save;
+}
 void DeepAnalogy::SetBlendWeight(int level){
 	weightLevel = level;
 }
@@ -88,6 +97,15 @@ void DeepAnalogy::UsePhotoTransfer(bool flag){
 }
 void DeepAnalogy::SetModel(string path){
 	path_model =path;
+}
+void DeepAnalogy::SetDoweOPTICALFLOW(int optical){
+	optical =optical;
+}
+void DeepAnalogy::setOPTICALFLOW(string f_opticalflow){
+	f_opticalflow =f_opticalflow;
+}
+void DeepAnalogy::setLAMBDA(float lambda){
+	lambda=lambda;
 }
 void DeepAnalogy::SetA(string f_a){
 	file_A = f_a;
@@ -229,7 +247,6 @@ void DeepAnalogy::LoadInputs(){
 }
 
 void DeepAnalogy::ComputeAnn() {
-
 	if (img_BPL.empty()||img_AL.empty())
 	{
 		waitKey();
@@ -240,7 +257,7 @@ void DeepAnalogy::ComputeAnn() {
 
 
 	int ann_size_AB, ann_size_BA;//should be assigned later
-	int *params_host, *params_device_AB, *params_device_BA;
+	int *params_host, *params_device_AB, *params_device_BA,*optic_data;
 	unsigned int *ann_device_AB, *ann_host_AB, *ann_device_BA, *ann_host_BA;
 	float *annd_device_AB, *annd_host_AB, *annd_device_BA, *annd_host_BA;
 
@@ -296,9 +313,13 @@ void DeepAnalogy::ComputeAnn() {
 	sizes.push_back(5);
 	sizes.push_back(5);
 	sizes.push_back(3);
-
-	params.iter = 10;
-
+	//OURS
+	if(doweread==1){params.iter=3;
+	//setMaxIterations(10);
+	}
+	else{params.iter = 10;}
+	cout<<"PI: "<<params.iter<<endl;
+	//OURS
 	//scale and enhance
     float ratio = resizeRatio;
 	Mat img_BP, img_A;
@@ -344,7 +365,31 @@ void DeepAnalogy::ComputeAnn() {
 	std::vector<Dim> data_B_size;
 	data_B_size.resize(params.layers.size());
 	classifier_B.Predict(img_BP, params.layers, data_B, data_BP, data_B_size);
-
+	cout<<doweread<<endl;
+	if(doweread==1){
+		for(int r=0;r<params.layers.size();r++){
+			string fo= "fileap"+to_string(r)+".txt";
+			cout<<fo<<endl;
+			FILE* fp = fopen( fo.c_str() , "rb" );
+			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
+			fread(lf, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp);
+			cudaMemcpy(data_AP[r],lf, data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyHostToDevice);
+			fclose(fp);
+			fo= "fileb"+to_string(r)+".txt";
+			FILE* fp2 = fopen( fo.c_str() , "rb" );
+			float* lf2=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
+			fread(lf2, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp2);
+			cudaMemcpy(data_B[r],lf2, data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyHostToDevice);
+			fclose(fp2);
+		}
+	}
+	if(optical==1){
+			FILE* fp = fopen( f_opticalflow.c_str() , "rb" );
+			int* lf=(int*)malloc(data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height * sizeof(int));
+			fread(lf, sizeof(float), data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height, fp);
+			cudaMemcpy(optic_data,lf, data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height * sizeof(int),cudaMemcpyHostToDevice);
+			fclose(fp);
+	}
 	clock_t start, finish;
 	double duration;
 	start = clock();
@@ -365,10 +410,20 @@ void DeepAnalogy::ComputeAnn() {
 	cudaMalloc(&annd_device_BA, ann_size_BA * sizeof(float));
 
 	int numlayer = params.layers.size();
-
-
+	/*int start_layer=0;
+	int save_layer=3;
+	if(doweread==1){
+	start_layer=3;
+	save_layer=3;
+	}
+	else{
+	start_layer=0;
+	save_layer=3;
+	}*/
 	//feature match
-	for (int curr_layer = 0; curr_layer < numlayer - 1; curr_layer++)//from 32 to 512
+	cout<<start_layer<<endl;
+	cout<<save_layer<<endl;
+	for (int curr_layer = start_layer; curr_layer < numlayer - 1; curr_layer++)//from 32 to 512
 	{
 
 		//set parameters
@@ -403,16 +458,29 @@ void DeepAnalogy::ComputeAnn() {
 		ann_size_BA = data_B_size[curr_layer].width* data_B_size[curr_layer].height;
 
 		//initialize ann if needed
-		if (curr_layer == 0)//initialize, rows and cols both less than 32, just use one block
+		if (curr_layer == start_layer)//initialize, rows and cols both less than 32, just use one block
 		{
 
 			initialAnn_kernel << <blocksPerGridAB, threadsPerBlockAB >> >(ann_device_AB, params_device_AB);
 			initialAnn_kernel << <blocksPerGridBA, threadsPerBlockBA >> >(ann_device_BA, params_device_BA);
 
+
+			if(doweread==1){
+			FILE* fp = fopen( "patchab.txt" , "rb" );
+			unsigned int* lf=(unsigned int*)malloc(ann_size_AB * sizeof(unsigned int));
+			fread(lf, sizeof(unsigned int), ann_size_AB, fp);
+			cudaMemcpy(ann_device_AB,lf, ann_size_AB * sizeof(unsigned int),cudaMemcpyHostToDevice);
+			fclose(fp);
+			FILE* fp2 = fopen( "patchba.txt" , "rb" );
+			unsigned int* lf2=(unsigned int*)malloc(ann_size_BA * sizeof(unsigned int));
+			fread(lf2, sizeof(unsigned int), ann_size_BA, fp2);
+			cudaMemcpy(ann_device_BA,lf2, ann_size_BA * sizeof(unsigned int),cudaMemcpyHostToDevice);
+			fclose(fp2);
+			}
+
 		}
 		else {//upsampling, notice this block's dimension is twice the ann at this point
 			unsigned int * ann_tmp;
-
 			cudaMalloc(&ann_tmp, ann_size_AB * sizeof(unsigned int));
 			upSample_kernel << <blocksPerGridAB, threadsPerBlockAB >> >(ann_device_AB, ann_tmp, params_device_AB,
 				data_A_size[curr_layer - 1].width, data_A_size[curr_layer - 1].height);//get new ann_device
@@ -426,7 +494,6 @@ void DeepAnalogy::ComputeAnn() {
 			cudaFree(ann_tmp);
 
 		}
-
 		//normarlize two data
 		float *Ndata_A, *Ndata_AP, *Ndata_B, *Ndata_BP;
 		float *response_A, *response_BP;
@@ -457,7 +524,6 @@ void DeepAnalogy::ComputeAnn() {
 		Mat response_byte1, response_byte2;
 		response1.convertTo(response_byte1, CV_8UC1, 255);
 		response2.convertTo(response_byte2, CV_8UC1, 255);
-
 		blend << <blocksPerGridAB, threadsPerBlockAB >> >(response_A, data_A[curr_layer], data_AP[curr_layer], weight[curr_layer], params_device_AB);
 		blend << <blocksPerGridBA, threadsPerBlockBA >> >(response_BP, data_BP[curr_layer], data_B[curr_layer], weight[curr_layer], params_device_BA);
 
@@ -466,9 +532,24 @@ void DeepAnalogy::ComputeAnn() {
 
 		//patchmatch
 		cout << "Finding nearest neighbor field using PatchMatch Algorithm at layer:" << params.layers[curr_layer] << ".\n";
-		patchmatch << <blocksPerGridAB, threadsPerBlockAB >> >(Ndata_AP, Ndata_BP, Ndata_A, Ndata_B, ann_device_AB, annd_device_AB, params_device_AB);
-		patchmatch << <blocksPerGridBA, threadsPerBlockBA >> >(Ndata_B, Ndata_A, Ndata_BP, Ndata_AP, ann_device_BA, annd_device_BA, params_device_BA);
-
+		patchmatch << <blocksPerGridAB, threadsPerBlockAB >> >(Ndata_AP, Ndata_BP, Ndata_A, Ndata_B, ann_device_AB, annd_device_AB, params_device_AB,doweread,optic_data,optical,curr_layer,lambda);
+		patchmatch << <blocksPerGridBA, threadsPerBlockBA >> >(Ndata_B, Ndata_A, Ndata_BP, Ndata_AP, ann_device_BA, annd_device_BA, params_device_BA,doweread,optic_data,optical,curr_layer,lambda);
+		if(curr_layer == save_layer){
+			cout<<ann_size_AB<<endl;
+			cout<<"AB: "<<data_A_size[curr_layer].width<<"   "<<data_A_size[curr_layer].height<<endl;
+			cout<<ann_size_BA<<endl;
+			cout<<"BA: "<<data_B_size[curr_layer].width<<"   "<<data_B_size[curr_layer].height<<endl;
+			FILE* fp = fopen( "patchab.txt" , "wb" );
+			unsigned int* lf=(unsigned int*)malloc(ann_size_AB * sizeof(unsigned int));
+			cudaMemcpy(lf,ann_device_AB, ann_size_AB * sizeof(unsigned int),cudaMemcpyDeviceToHost);
+			fwrite(lf,sizeof(unsigned int), ann_size_AB, fp);
+			fclose(fp);
+			FILE* fp2 = fopen( "patchba.txt" , "wb" );
+			unsigned int* lf2=(unsigned int*)malloc(ann_size_BA * sizeof(unsigned int));
+			cudaMemcpy(lf2,ann_device_BA, ann_size_BA * sizeof(unsigned int),cudaMemcpyDeviceToHost);
+			fwrite(lf2,sizeof(unsigned int), ann_size_BA, fp2);
+			fclose(fp2);
+			}
 		cudaFree(Ndata_A);
 		cudaFree(Ndata_AP);
 		cudaFree(Ndata_B);
@@ -564,14 +645,14 @@ void DeepAnalogy::ComputeAnn() {
 			float *target;
 			cudaMalloc(&target, num1 * sizeof(float));
 			avg_vote << <blocksPerGridAB, threadsPerBlockAB >> >(ann_device_AB, data_BP[curr_layer], target, params_device_AB);
-			deconv(&classifier_A, params.layers[curr_layer], target, data_A_size[curr_layer], params.layers[next_layer], data_AP[next_layer], data_A_size[next_layer]);
+			deconv(&classifier_A, params.layers[curr_layer], target, data_A_size[curr_layer], params.layers[next_layer], data_AP[next_layer], data_A_size[next_layer],doweread);
 			cudaFree(target);
 
 			num1 = data_B_size[curr_layer].channel*data_B_size[curr_layer].width*data_B_size[curr_layer].height;
 			num2 = data_B_size[next_layer].channel*data_B_size[next_layer].width*data_B_size[next_layer].height;
 			cudaMalloc(&target, num1 * sizeof(float));
 			avg_vote << <blocksPerGridBA, threadsPerBlockBA >> >(ann_device_BA, data_A[curr_layer], target, params_device_BA);
-			deconv(&classifier_B, params.layers[curr_layer], target, data_B_size[curr_layer], params.layers[next_layer], data_B[next_layer], data_B_size[next_layer]);
+			deconv(&classifier_B, params.layers[curr_layer], target, data_B_size[curr_layer], params.layers[next_layer], data_B[next_layer], data_B_size[next_layer],doweread);
 			cudaFree(target);
 
 		}
@@ -645,7 +726,41 @@ void DeepAnalogy::ComputeAnn() {
 		cv::resize(result_BA, out, Size(), (float)ori_BP_cols / cur_BP_cols, (float)ori_BP_rows / cur_BP_rows, INTER_CUBIC);
 		sprintf(fname, "resultBA.png");
 		imwrite(path_output + fname, out);
-
+		//ours
+		for(int r=0;r<params.layers.size();r++){
+			char or=r+'0';
+			string fo= "fileap"+to_string(r)+".txt";
+			//FILE* fp = fopen( "fileap"+or+".txt" , "wb" );
+			cout<<fo<<endl;
+			FILE* fp = fopen( fo.c_str() , "wb" );
+			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
+			cudaMemcpy(lf,data_AP[r], data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
+			cout<<"Layer: "<<r<<"  channel:  "<<data_A_size[r].channel<<"  width: "<<data_A_size[r].width<<"  hight: "<<data_A_size[r].height<<endl;
+			fwrite(lf, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp);
+			fclose(fp);
+			fo= "fileb"+to_string(r)+".txt";
+			FILE* fp2 = fopen( fo.c_str() , "wb" );
+			float* lf2=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
+			cudaMemcpy(lf2,data_B[r], data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
+			cout<<"Layer: "<<r<<"  channel:  "<<data_B_size[r].channel<<"  width: "<<data_B_size[r].width<<"  hight: "<<data_B_size[r].height<<endl;
+			fwrite(lf2, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp2);
+			fclose(fp2);
+			fo= "filea"+to_string(r)+".txt";
+			FILE* fp3 = fopen( fo.c_str() , "wb" );
+			float* lf3=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
+			cudaMemcpy(lf3,data_A[r], data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
+			cout<<"Layer: "<<r<<"  channel:  "<<data_A_size[r].channel<<"  width: "<<data_A_size[r].width<<"  hight: "<<data_A_size[r].height<<endl;
+			fwrite(lf3, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp3);
+			fclose(fp3);
+			fo= "filebp"+to_string(r)+".txt";
+			FILE* fp4 = fopen( fo.c_str() , "wb" );
+			float* lf4=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
+			cudaMemcpy(lf4,data_BP[r], data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
+			cout<<"Layer: "<<r<<"  channel:  "<<data_B_size[r].channel<<"  width: "<<data_B_size[r].width<<"  hight: "<<data_B_size[r].height<<endl;
+			fwrite(lf4, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp4);
+			fclose(fp4);
+		}
+		//end of ours
 		if (photoTransfer)
 		{
 			cout << "Refining photo transfer." << endl;

@@ -39,6 +39,6 @@ private:
 
 void string_replace(string&s1, const string&s2, const string&s3);
 
-void deconv(Classifier* classifier, string layer1, float* d_y, Dim dim1, string layer2, float* d_x, Dim dim2);
+void deconv(Classifier* classifier, string layer1, float* d_y, Dim dim1, string layer2, float* d_x, Dim dim2, int doweread);
 
 #endif

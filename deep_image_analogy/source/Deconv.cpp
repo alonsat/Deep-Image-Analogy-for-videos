@@ -43,7 +43,7 @@ void string_replace(string&s1, const string&s2, const string&s3)
 	}
 }
 
-void deconv(Classifier* classifier, string layer1, float* d_y, Dim dim1, string layer2, float* d_x, Dim dim2)
+void deconv(Classifier* classifier, string layer1, float* d_y, Dim dim1, string layer2, float* d_x, Dim dim2,int doweread)
 {
 
 	int num1 = dim1.channel*dim1.height*dim1.width;
@@ -70,6 +70,9 @@ void deconv(Classifier* classifier, string layer1, float* d_y, Dim dim1, string 
 	my_cost_function func(classifier, m_layer1, d_y, num1, m_layer2, num2, id1, id2);
 
 	lbfgs solver(func, Caffe::cublas_handle());
+	/*if (doweread == 1){
+		solver.setMaxIterations(10);
+	}*/
 
 	lbfgs::status s = solver.minimize(d_x);
 
