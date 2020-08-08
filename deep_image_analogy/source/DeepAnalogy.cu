@@ -535,8 +535,8 @@ void DeepAnalogy::ComputeAnn() {
 
 		//patchmatch
 		cout << "Finding nearest neighbor field using PatchMatch Algorithm at layer:" << params.layers[curr_layer] << ".\n";
-		patchmatch << <blocksPerGridAB, threadsPerBlockAB >> >(Ndata_AP, Ndata_BP, Ndata_A, Ndata_B, ann_device_AB, annd_device_AB, params_device_AB,doweread,optic_data,optical,curr_layer,lambda);
-		patchmatch << <blocksPerGridBA, threadsPerBlockBA >> >(Ndata_B, Ndata_A, Ndata_BP, Ndata_AP, ann_device_BA, annd_device_BA, params_device_BA,doweread,optic_data,optical,curr_layer,lambda);
+		patchmatch << <blocksPerGridAB, threadsPerBlockAB >> >(Ndata_AP, Ndata_BP, Ndata_A, Ndata_B, ann_device_AB, annd_device_AB, params_device_AB);
+		patchmatch << <blocksPerGridBA, threadsPerBlockBA >> >(Ndata_B, Ndata_A, Ndata_BP, Ndata_AP, ann_device_BA, annd_device_BA, params_device_BA);
 		if(curr_layer == save_layer){
 			cout<<ann_size_AB<<endl;
 			cout<<"AB: "<<data_A_size[curr_layer].width<<"   "<<data_A_size[curr_layer].height<<endl;
@@ -731,7 +731,9 @@ void DeepAnalogy::ComputeAnn() {
 		imwrite(path_output + fname, out);
 		//ours
 		for(int r=0;r<params.layers.size();r++){
+			char or=r+'0';
 			string fo= "fileap"+to_string(r)+".txt";
+			//FILE* fp = fopen( "fileap"+or+".txt" , "wb" );
 			cout<<fo<<endl;
 			FILE* fp = fopen( fo.c_str() , "wb" );
 			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));

@@ -19,7 +19,7 @@ __host__ __device__ int INT_TO_Y(unsigned int v);
 
 __global__ void blend(float *cmap, float* oldd, float* newd, float weight, int * params);
 
-__global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned int *ann, float *annd, int * params,int doweread,int *m,int optical, int curr_layer,float lambda);
+__global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned int *ann, float *annd, int * params);
 
 __global__ void initialAnn_kernel( unsigned int * ann, int * params);
 
@@ -32,4 +32,3 @@ __host__ Mat reconstruct_dflow(Mat a, Mat b, unsigned int * ann, int patch_w);
 __host__ Mat reconstruct_avg(Mat a, Mat b, unsigned int * ann, int patch_w);
 
 __host__ __device__ int clamp(int x, int x_max, int x_min);
-
