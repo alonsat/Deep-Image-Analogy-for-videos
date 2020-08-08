@@ -70,7 +70,7 @@ for count in range(startframe,NumberOfFrames):
   p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
   p3='{}/frame{}.png'.format(output_frames_folder_path,count)
   p4=image_semantic
-  p5=frames_folder_output#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
+  p5=frames_folder_output+"/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
   p6='0'
   p7='1'
   p8='3'
