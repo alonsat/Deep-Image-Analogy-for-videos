@@ -410,7 +410,7 @@ void DeepAnalogy::ComputeAnn() {
 	cudaMalloc(&annd_device_BA, ann_size_BA * sizeof(float));
 
 	int numlayer = params.layers.size();
-	/*int start_layer=0;
+	int start_layer=0;
 	int save_layer=3;
 	if(doweread==1){
 	start_layer=3;
@@ -419,7 +419,7 @@ void DeepAnalogy::ComputeAnn() {
 	else{
 	start_layer=0;
 	save_layer=3;
-	}*/
+	}
 	//feature match
 	cout<<start_layer<<endl;
 	cout<<save_layer<<endl;
