@@ -5,16 +5,16 @@ import sys
 import subprocess
 import shutil
 import time
-print("write path to video")
-input_video_path=input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\inputs\\eagle.mp4"#input()
-print("write path to folder that would include the video split to frames")
-output_frames_folder_path=input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\outputs\\splitframes"#input()
-print("write path to the style")
-image_semantic=input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\inputs\\fly.png"#input()
-print("where do you want the output frames?")
-frames_folder_output=input()#"."
-print("where do you want the output video?")
-output_video_path=input()#"."
+#print("write path to video")
+input_video_path="./content/Deep-Image-Analogy-for-videos/eagle.mp4"#input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\inputs\\eagle.mp4"#input()
+#print("write path to folder that would include the video split to frames")
+output_frames_folder_path="./content/Deep-Image-Analogy-for-videos/frames_inp"#input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\outputs\\splitframes"#input()
+#print("write path to the style")
+image_semantic="./content/Deep-Image-Analogy-for-videos/fly.png"#input()#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\inputs\\fly.png"#input()
+#print("where do you want the output frames?")
+frames_folder_output="./content/Deep-Image-Analogy-for-videos/output"#input()#"."
+#print("where do you want the output video?")
+output_video_path="./content/Deep-Image-Analogy-for-videos/output"#input()#"."
 
 image_orig_semantic=image_semantic
 if not os.path.exists(output_frames_folder_path):
