@@ -67,7 +67,7 @@ for count in range(startframe,NumberOfFrames):
       image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
       recursive_flag=False
   p1="/content/Deep-Image-Analogy-for-videos/demo"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\deep_image_analogy.exe"
-  p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/modles/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
+  p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
   p3='{}/frame{}.png'.format(output_frames_folder_path,count)
   p4=image_semantic
   p5=frames_folder_output#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
@@ -191,7 +191,7 @@ for count in range(startframe-1,-1,-1):
       image_semantic='{}/frame{}.png'.format(frames_folder_output,count+1)
       recursive_flag=False
   p1="/content/De/content/Deep-Image-Analogy-for-videos/demo"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\deep_image_analogy.exe"
-  p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/modles/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
+  p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
   p3='{}/frame{}.png'.format(output_frames_folder_path,count)
   p4=image_semantic
   p5=frames_folder_output#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
