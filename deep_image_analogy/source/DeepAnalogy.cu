@@ -274,6 +274,7 @@ void DeepAnalogy::ComputeAnn() {
 
 	std::vector<float> weight;
 	weight.push_back(1.0);
+	cout<<"W: "<<weightLevel<<endl;
 	switch (weightLevel)
 	{
 	case 1:
@@ -365,6 +366,7 @@ void DeepAnalogy::ComputeAnn() {
 	std::vector<Dim> data_B_size;
 	data_B_size.resize(params.layers.size());
 	classifier_B.Predict(img_BP, params.layers, data_B, data_BP, data_B_size);
+	cout<<"AAAA"<<endl;
 	cout<<doweread<<endl;
 	if(doweread==1){
 		for(int r=0;r<params.layers.size();r++){
@@ -383,6 +385,7 @@ void DeepAnalogy::ComputeAnn() {
 			fclose(fp2);
 		}
 	}
+	cout<<optical<<endl;
 	if(optical==1){
 			FILE* fp = fopen( f_opticalflow.c_str() , "rb" );
 			int* lf=(int*)malloc(data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height * sizeof(int));
@@ -410,7 +413,7 @@ void DeepAnalogy::ComputeAnn() {
 	cudaMalloc(&annd_device_BA, ann_size_BA * sizeof(float));
 
 	int numlayer = params.layers.size();
-	int start_layer=0;
+	/*int start_layer=0;
 	int save_layer=3;
 	if(doweread==1){
 	start_layer=3;
@@ -419,7 +422,7 @@ void DeepAnalogy::ComputeAnn() {
 	else{
 	start_layer=0;
 	save_layer=3;
-	}
+	}*/
 	//feature match
 	cout<<start_layer<<endl;
 	cout<<save_layer<<endl;
@@ -728,9 +731,7 @@ void DeepAnalogy::ComputeAnn() {
 		imwrite(path_output + fname, out);
 		//ours
 		for(int r=0;r<params.layers.size();r++){
-			char or=r+'0';
 			string fo= "fileap"+to_string(r)+".txt";
-			//FILE* fp = fopen( "fileap"+or+".txt" , "wb" );
 			cout<<fo<<endl;
 			FILE* fp = fopen( fo.c_str() , "wb" );
 			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));

@@ -255,6 +255,8 @@ __global__ void upSample_kernel(unsigned int * ann, unsigned int * ann_tmp,int *
 }
 
 __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned int *ann, float *annd, int * params,int doweread,int *m,int optical, int curr_layer,float lambda) {
+//if(optical==1){
+
 	 int ratio=1;
 	switch(curr_layer){
 	case 5:
@@ -278,6 +280,7 @@ __global__ void patchmatch(float * a, float * b, float *a1, float *b1, unsigned 
 	deafault:
 	break;
 	}
+	//}
 
 	int ax = blockIdx.x*blockDim.x + threadIdx.x;
 	int ay = blockIdx.y*blockDim.y + threadIdx.y;
