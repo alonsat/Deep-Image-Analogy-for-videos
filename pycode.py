@@ -5,120 +5,41 @@ import sys
 import subprocess
 import shutil
 import time
-if __name__ == "__main__":
-    input_video_path="/content/Deep-Image-Analogy-for-videos/eagle.mp4"
-    output_frames_folder_path="/content/Deep-Image-Analogy-for-videos/frames_inp"
-    image_semantic="/content/Deep-Image-Analogy-for-videos/fly.png"
-    frames_folder_output="/content/Deep-Image-Analogy-for-videos/output"
-    output_video_path="/content/Deep-Image-Analogy-for-videos/output"
+def copyfiles(path1,path2):
+    '''
+        a function for copying the feature maps and patches of the starting frame
+    '''
+    shutil.copyfile(path1+"/filea0.txt",path2+"/filea0.txt")
+    shutil.copyfile(paht1+"/filea1.txt",path2+"/filea1.txt")
+    shutil.copyfile(path1+"/filea2.txt",path2+"/filea2.txt")
+    shutil.copyfile(path1+"/filea3.txt",path2+"/filea3.txt")
+    shutil.copyfile(path1+"/filea4.txt",path2+"/filea4.txt")
+    shutil.copyfile(path1+"/filea5.txt",path2+"/filea5.txt")
+    shutil.copyfile(path+"/fileap0.txt",path2+"/fileap0.txt")
+    shutil.copyfile(path1+"/fileap1.txt",path2+"/fileap1.txt")
+    shutil.copyfile(path1+"/fileap2.txt",path2+"/fileap2.txt")
+    shutil.copyfile(path1+"/fileap3.txt",path2+"/fileap3.txt")
+    shutil.copyfile(path1+"/fileap4.txt",path2+"/fileap4.txt")
+    shutil.copyfile(path1+"/fileap5.txt",path2+"/fileap5.txt")
+    shutil.copyfile(path1+"/fileb0.txt",path2+"/fileb0.txt")
+    shutil.copyfile(path1+"/fileb1.txt",path2+"/fileb1.txt")
+    shutil.copyfile(path1+"/fileb2.txt",path2+"/fileb2.txt")
+    shutil.copyfile(path1+"/fileb3.txt",path2+"/fileb3.txt")
+    shutil.copyfile(path1+"/fileb4.txt",path2+"/fileb4.txt")
+    shutil.copyfile(path1+"/fileb5.txt",path2+"/fileb5.txt")
+    shutil.copyfile(path1+"/filebp0.txt",path2+"/filebp0.txt")
+    shutil.copyfile(path1+"/filebp1.txt",path2+"/filebp1.txt")
+    shutil.copyfile(path1+"/filebp2.txt",path2+"/filebp2.txt")
+    shutil.copyfile(path1+"/filebp3.txt",path2+"/filebp3.txt")
+    shutil.copyfile(path1+"/filebp4.txt",path2+"/filebp4.txt")
+    shutil.copyfile(path1+"/filebp5.txt",path2+"/filebp5.txt")
+    shutil.copyfile(path1+"/patchab.txt",path2+"/patchab.txt")
+    shutil.copyfile(path1+"/patchba.txt",path2+"/patchba.txt")
 
-    image_orig_semantic=image_semantic
-    if not os.path.exists(output_frames_folder_path):
-        os.mkdir(output_frames_folder_path)
-    vidcap = cv2.VideoCapture(input_video_path)
-    success,image = vidcap.read()
-    count = 0
-    frame_limit=1000 #if more than frame_limit frames, they will not be saved
-    while success:
-      cv2.imwrite(output_frames_folder_path+"/frame{}.png".format(count), image)     # save frame as JPEG file      
-      success,image = vidcap.read()
-      #print('Read a new frame: ', success)
-      count += 1
-      if(count==frame_limit): #
-        break
-    print('%d frames were read' % count)
-
-    fps=int(vidcap.get(5))
-    fourcc=int(vidcap.get(6))
-    vidcap.release()
-
-    NumberOfFrames=count
-    flag_google_drive=False
-    frames_folder_input=output_frames_folder_path
-
-
-    if not os.path.exists(frames_folder_output): #create the output folder
-        os.mkdir(frames_folder_output)
-
-
-    img_BP=cv2.imread(image_semantic) #read B_prime image
-
-
-
-    height, width=img_BP.shape[0],img_BP.shape[1]
-    startframe=0
-    recursive_flag=True
-
-    for count in range(startframe,NumberOfFrames):
-      #img_A=cv2.imread(frames_folder_input+"/frame%d.jpg" % count) #read new frame (A)
-      #if(img_A is None): #just a test to when we are out of images (maybe we can switch to a counter)
-      #  break
-
-      print(count)
-      #if you delete next 2 lines, it is the frame by frame method, otherwise recursive:
-      if(count>0 and recursive_flag):
-          
-          image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
-          recursive_flag=False
-      p1="/content/Deep-Image-Analogy-for-videos/demo"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\deep_image_analogy.exe"
-      p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
-      p3='{}/frame{}.png'.format(output_frames_folder_path,count)
-      p4=image_semantic
-      p5=frames_folder_output+"/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
-      p6='0'
-      p7='1'
-      p8='3'
-      p9='0'
-      p13='/content/Deep-Image-Analogy-for-videos/flows/opticalflow_{}'.format(count)#flowfile
-      p15='0.5'#lambda
-      if(count==0):
-          p10='0'
-          p11='0'
-          p12='3'        
-          p14='0'
-      else:
-          p10='1'
-          p11='3'
-          p12='3'
-          p14='0'
-      starttime=time.time()
-      if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12+" "+p13+" "+p14+" "+p15)):
-          print("FAIL")
-      print(time.time()-starttime)
-      os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
-      if(count==startframe):
-          shutil.copyfile(frames_folder_output+"/flowAB.txt",frames_folder_output+"/n/flowAB.txt")
-          shutil.copyfile(frames_folder_output+"/flowBA.txt",frames_folder_output+"/n/flowBA.txt")
-          shutil.copyfile(frames_folder_output+"/filea0.txt",frames_folder_output+"/n/filea0.txt")
-          shutil.copyfile(frames_folder_output+"/filea1.txt",frames_folder_output+"/n/filea1.txt")
-          shutil.copyfile(frames_folder_output++"/filea2.txt",frames_folder_output+"/n/filea2.txt")
-          shutil.copyfile(frames_folder_output+"/filea3.txt",frames_folder_output+"/n/filea3.txt")
-          shutil.copyfile(frames_folder_output+"/filea4.txt",frames_folder_output+"/n/filea4.txt")
-          shutil.copyfile(frames_folder_output+"/filea5.txt",frames_folder_output+"/n/filea5.txt")
-          shutil.copyfile(frames_folder_output+"/fileap0.txt",frames_folder_output+"/n/fileap0.txt")
-          shutil.copyfile(frames_folder_output+"/fileap1.txt",frames_folder_output+"/n/fileap1.txt")
-          shutil.copyfile(frames_folder_output+"/fileap2.txt",frames_folder_output+"/n/fileap2.txt")
-          shutil.copyfile(frames_folder_output+"/fileap3.txt",frames_folder_output+"/n/fileap3.txt")
-          shutil.copyfile(frames_folder_output+"/fileap4.txt",frames_folder_output+"/n/fileap4.txt")
-          shutil.copyfile(frames_folder_output+"/fileap5.txt",frames_folder_output+"/n/fileap5.txt")
-          shutil.copyfile(frames_folder_output+"/fileb0.txt",frames_folder_output+"/n/fileb0.txt")
-          shutil.copyfile(frames_folder_output+"/fileb1.txt",frames_folder_output+"/n/fileb1.txt")
-          shutil.copyfile(frames_folder_output+"/fileb2.txt",frames_folder_output+"/n/fileb2.txt")
-          shutil.copyfile(frames_folder_output+"/fileb3.txt",frames_folder_output+"/n/fileb3.txt")
-          shutil.copyfile(frames_folder_output+"/fileb4.txt",frames_folder_output+"/n/fileb4.txt")
-          shutil.copyfile(frames_folder_output+"/fileb5.txt",frames_folder_output+"/n/fileb5.txt")
-          shutil.copyfile(frames_folder_output+"/filebp0.txt",frames_folder_output+"/n/filebp0.txt")
-          shutil.copyfile(frames_folder_output+"/filebp1.txt",frames_folder_output+"/n/filebp1.txt")
-          shutil.copyfile(frames_folder_output+"/filebp2.txt",frames_folder_output+"/n/filebp2.txt")
-          shutil.copyfile(frames_folder_output+"/filebp3.txt",frames_folder_output+"/n/filebp3.txt")
-          shutil.copyfile(frames_folder_output+"/filebp4.txt",frames_folder_output+"/n/filebp4.txt")
-          shutil.copyfile(frames_folder_output+"/filebp5.txt",frames_folder_output+"/n/filebp5.txt")
-      
-      if(flag_google_drive):
-        cv2.imwrite(drive_path+"/frame%d.png" % count, img) #write new result
-      #print('write a new frame: ', success, count)
-    os.remove(frames_folder_output+"/flowAB.txt")
-    os.remove(frames_folder_output+"/flowBA.txt")
+def remfiles(frames_folder_output):
+    '''
+        a function for deleting the feature maps and patches of the previous frame used when we return to starting frame when we don't use the first frame as the starting frame
+    '''
     os.remove(frames_folder_output+"/filea0.txt")
     os.remove(frames_folder_output+"/filea1.txt")
     os.remove(frames_folder_output+"/filea2.txt")
@@ -143,96 +64,135 @@ if __name__ == "__main__":
     os.remove(frames_folder_output+"/filebp3.txt")
     os.remove(frames_folder_output+"/filebp4.txt")
     os.remove(frames_folder_output+"/filebp5.txt")
+    os.remove(frames_folder_output+"/patchab.txt")
+    os.remove(frames_folder_output+"/patchba.txt")
 
 
 
-
-    shutil.copyfile(frames_folder_output+"/n/flowAB.txt",frames_folder_output+"/flowAB.txt")
-    shutil.copyfile(frames_folder_output+"/n/flowBA.txt",frames_folder_output+"/flowBA.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea0.txt",frames_folder_output+"/filea0.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea1.txt",frames_folder_output+"/filea1.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea2.txt",frames_folder_output+"/filea2.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea3.txt",frames_folder_output+"/filea3.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea4.txt",frames_folder_output+"/filea4.txt")
-    shutil.copyfile(frames_folder_output+"/n/filea5.txt",frames_folder_output+"/filea5.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap0.txt",frames_folder_output+"/fileap0.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap1.txt",frames_folder_output+"/fileap1.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap2.txt",frames_folder_output+"/fileap2.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap3.txt",frames_folder_output+"/fileap3.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap4.txt",frames_folder_output+"/fileap4.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileap5.txt",frames_folder_output+"/fileap5.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb0.txt",frames_folder_output+"/fileb0.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb1.txt",frames_folder_output+"/fileb1.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb2.txt",frames_folder_output+"/fileb2.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb3.txt",frames_folder_output+"/fileb3.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb4.txt",frames_folder_output+"/fileb4.txt")
-    shutil.copyfile(frames_folder_output+"/n/fileb5.txt",frames_folder_output+"/fileb5.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp0.txt",frames_folder_output+"/filebp0.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp1.txt",frames_folder_output+"/filebp1.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp2.txt",frames_folder_output+"/filebp2.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp3.txt",frames_folder_output+"/filebp3.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp4.txt",frames_folder_output+"/filebp4.txt")
-    shutil.copyfile(frames_folder_output+"/n/filebp5.txt",frames_folder_output+"/filebp5.txt")
-    for count in range(startframe-1,-1,-1):
-      #img_A=cv2.imread(frames_folder_input+"/frame%d.jpg" % count) #read new frame (A)
-      #if(img_A is None): #just a test to when we are out of images (maybe we can switch to a counter)
-      #  break
-
-      print(count)
-      #if you delete next 2 lines, it is the frame by frame method, otherwise recursive:
-      if(count>0 and recursive_flag):
-          
-          image_semantic='{}/frame{}.png'.format(frames_folder_output,count+1)
-          recursive_flag=False
-      p1="/content/De/content/Deep-Image-Analogy-for-videos/demo"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\deep_image_analogy.exe"
-      p2="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\windows\\deep_image_analogy\\models\\"
-      p3='{}/frame{}.png'.format(output_frames_folder_path,count)
+def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output):
+    '''a function that runs deep image analogy for videos starting form start frame until the last frame '''
+    for count in range(startframe,NumberOfFrames):
+      if(count>0 and recursive_flag): 
+          image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
+          if(semi_recursive):
+              recursive_flag=False
+      p1=exe_path
+      p2=path_to_models
+      p3='{}/frame{}.png'.format(frames_folder_input,count)
       p4=image_semantic
-      p5=frames_folder_output#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
+      p5=frames_folder_output+"/"
       p6='0'
       p7='1'
       p8='3'
       p9='0'
-      p13='/content/Deep-Image-Analogy-for-videos/flows/opticalflow_{}'.format(count)#flowfile
-      p15='0.5'#lambda
       if(count==0):
           p10='0'
           p11='0'
           p12='3'        
-          p14='0'
       else:
           p10='1'
           p11='3'
           p12='3'
-          p14='0'
       starttime=time.time()
-      if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12+" "+p13+" "+p14+" "+p15)):
+      if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12)):
           print("FAIL")
       print(time.time()-starttime)
       os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
-    #frames to video
-    frames_folder_path=frames_folder_output#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\"
+      if(count==startframe):
+          copyfiles(frames_folder_output+"/files",frames_folder_output+"/n")
+def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output):
 
-    print(fps)
-    #fps=3 #Delete later
+    for count in range(startframe-1,-1,-1):
+      if(count>0 and recursive_flag):
+          image_semantic='{}/frame{}.png'.format(frames_folder_output,count+1)
+          if(semi_recursive):
+              recursive_flag=False
+          
+      p1=exe_path
+      p2=path_to_models
+      p3='{}/frame{}.png'.format(frames_folder_input,count)
+      p4=image_semantic
+      p5=frames_folder_output
+      p6='0'
+      p7='1'
+      p8='3'
+      p9='0'
+      if(count==0):
+          p10='0'
+          p11='0'
+          p12='3'        
+      else:
+          p10='1'
+          p11='3'
+          p12='3'
+      starttime=time.time()
+      if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12)):
+          print("FAIL")
+      print(time.time()-starttime)
+      os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
+      
+if __name__ == "__main__":
+    exe_path="/content/Deep-Image-Analogy-for-videos/demo"#path to executable
+    path_to_models="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#path to models folder
+    input_video_path="/content/Deep-Image-Analogy-for-videos/eagle.mp4" #path to video
+    frames_folder_input="/content/Deep-Image-Analogy-for-videos/frames_inp" #folder to contain the frames of the original video
+    image_semantic="/content/Deep-Image-Analogy-for-videos/fly.png" #path to style file
+    frames_folder_output="/content/Deep-Image-Analogy-for-videos/output" #path to folder that would contatin the frames of the output video
+    output_video_path="/content/Deep-Image-Analogy-for-videos/output" #path for the output video
+    startframe=0 #the start frame that we use (if different from 0 then we run from it in both directions)
+    recursive_flag=True #recursive flag for running the algorithm in recursive and semi recursive (first fram recursion) ways
+    semi_recursive=True #flag to mark that you run semi recursive
 
-    temp_img=cv2.imread(frames_folder_output+"/frame0.png")#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release"+"/frame0.png")
+    if not os.path.exists(frames_folder_input):
+        os.mkdir(frames_folder_input)
+    #split the original video to frames
+    vidcap = cv2.VideoCapture(input_video_path)
+    success,image = vidcap.read()
+    count = 0 #frame counter
+    while success:
+      cv2.imwrite(frames_folder_input+"/frame{}.png".format(count), image)  # save frame as PNG file      
+      success,image = vidcap.read()
+      count += 1
+    print('%d frames were read' % count)
 
-    frame_width = temp_img.shape[1] #int(vidcap.get(3))
-    frame_height = temp_img.shape[0] #int(vidcap.get(4))
-    fps = fps
-    fourcc = cv2.VideoWriter_fourcc(*'VP90')#cv2.VideoWriter_fourcc('H','2','6','4')
-    out = cv2.VideoWriter(output_video_path+"eagle.mp4", fourcc, fps, (frame_width, frame_height), isColor=True)#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release\\eagle_regular.mp4", fourcc, fps, (frame_width, frame_height), isColor=True)
+    fps=int(vidcap.get(5)) # get the frame rate per second of the video
+    vidcap.release()
+
+    NumberOfFrames=count
+
+
+    if not os.path.exists(frames_folder_output): #create the output folder
+        os.mkdir(frames_folder_output)
+
+
+    img_BP=cv2.imread(image_semantic) #read B_prime image
+
+    height, width=img_BP.shape[0],img_BP.shape[1]
+    
+    deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output)
+    
+    remfiles(frames_folder_output+"/files")
+
+    copyfiles(frames_folder_output+"/n",frames_folder_output+"/files")
+
+    deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output)
+    
+    #convert the frames to video
+
+    temp_img=cv2.imread(frames_folder_output+"/frame0.png")
+
+    frame_width = temp_img.shape[1]
+    frame_height = temp_img.shape[0]
+    fourcc = cv2.VideoWriter_fourcc(*'VP90')
+    out = cv2.VideoWriter(output_video_path+"eagle.mp4", fourcc, fps, (frame_width, frame_height), isColor=True)
     count = 0
     while True:
-      img=cv2.imread(frames_folder_output+"/frame{}.png".format(count))#"C:\\Users\\User\\Downloads\\Deep-Image-Analogy-master\\Deep-Image-Analogy-master\\Build\\x64\\Release"+"/frame{}.png".format(count))
+      img=cv2.imread(frames_folder_output+"/frame{}.png".format(count))
       if(img is None):
         break
       out.write(img)
       print('write a new frame: ', success, count)
       count += 1
-      '''if(count==10):
-        break'''
 
     print('%d frames were written' % count)
     print(output_video_path)
