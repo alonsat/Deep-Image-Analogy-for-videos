@@ -40,9 +40,6 @@ int main(int argc, char** argv) {
 		else{
 			dp.UsePhotoTransfer(false);
 		}
-		dp.setOPTICALFLOW(argv[12]);
-		dp.SetDoweOPTICALFLOW(atoi(argv[13]));
-		dp.setLAMBDA(atoi(argv[14]));
 		dp.LoadInputs();
 		dp.ComputeAnn();
 	}

@@ -98,15 +98,6 @@ void DeepAnalogy::UsePhotoTransfer(bool flag){
 void DeepAnalogy::SetModel(string path){
 	path_model =path;
 }
-void DeepAnalogy::SetDoweOPTICALFLOW(int optical){
-	optical =optical;
-}
-void DeepAnalogy::setOPTICALFLOW(string f_opticalflow){
-	f_opticalflow =f_opticalflow;
-}
-void DeepAnalogy::setLAMBDA(float lambda){
-	lambda=lambda;
-}
 void DeepAnalogy::SetA(string f_a){
 	file_A = f_a;
 }
@@ -274,7 +265,6 @@ void DeepAnalogy::ComputeAnn() {
 
 	std::vector<float> weight;
 	weight.push_back(1.0);
-	cout<<"W: "<<weightLevel<<endl;
 	switch (weightLevel)
 	{
 	case 1:
@@ -319,7 +309,6 @@ void DeepAnalogy::ComputeAnn() {
 	//setMaxIterations(10);
 	}
 	else{params.iter = 10;}
-	cout<<"PI: "<<params.iter<<endl;
 	//OURS
 	//scale and enhance
     float ratio = resizeRatio;
@@ -366,32 +355,21 @@ void DeepAnalogy::ComputeAnn() {
 	std::vector<Dim> data_B_size;
 	data_B_size.resize(params.layers.size());
 	classifier_B.Predict(img_BP, params.layers, data_B, data_BP, data_B_size);
-	cout<<"AAAA"<<endl;
-	cout<<doweread<<endl;
 	if(doweread==1){
 		for(int r=0;r<params.layers.size();r++){
-			string fo= "/content/Deep-Image-Analogy-for-videos/output/files/fileap"+to_string(r)+".txt";
-			cout<<fo<<endl;
+			string fo= "fileap"+to_string(r)+".txt";
 			FILE* fp = fopen( fo.c_str() , "rb" );
 			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
 			fread(lf, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp);
 			cudaMemcpy(data_AP[r],lf, data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyHostToDevice);
 			fclose(fp);
-			fo= "/content/Deep-Image-Analogy-for-videos/output/files/fileb"+to_string(r)+".txt";
+			fo= "fileb"+to_string(r)+".txt";
 			FILE* fp2 = fopen( fo.c_str() , "rb" );
 			float* lf2=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
 			fread(lf2, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp2);
 			cudaMemcpy(data_B[r],lf2, data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyHostToDevice);
 			fclose(fp2);
 		}
-	}
-	cout<<optical<<endl;
-	if(optical==1){
-			FILE* fp = fopen( f_opticalflow.c_str() , "rb" );
-			int* lf=(int*)malloc(data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height * sizeof(int));
-			fread(lf, sizeof(float), data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height, fp);
-			cudaMemcpy(optic_data,lf, data_A_size[0].channel * data_A_size[0].width * data_A_size[0].height * sizeof(int),cudaMemcpyHostToDevice);
-			fclose(fp);
 	}
 	clock_t start, finish;
 	double duration;
@@ -413,19 +391,7 @@ void DeepAnalogy::ComputeAnn() {
 	cudaMalloc(&annd_device_BA, ann_size_BA * sizeof(float));
 
 	int numlayer = params.layers.size();
-	/*int start_layer=0;
-	int save_layer=3;
-	if(doweread==1){
-	start_layer=3;
-	save_layer=3;
-	}
-	else{
-	start_layer=0;
-	save_layer=3;
-	}*/
 	//feature match
-	cout<<start_layer<<endl;
-	cout<<save_layer<<endl;
 	for (int curr_layer = start_layer; curr_layer < numlayer - 1; curr_layer++)//from 32 to 512
 	{
 
@@ -469,12 +435,12 @@ void DeepAnalogy::ComputeAnn() {
 
 
 			if(doweread==1){
-			FILE* fp = fopen( "/content/Deep-Image-Analogy-for-videos/output/files/patchab.txt" , "rb" );
+			FILE* fp = fopen( "patchab.txt" , "rb" );
 			unsigned int* lf=(unsigned int*)malloc(ann_size_AB * sizeof(unsigned int));
 			fread(lf, sizeof(unsigned int), ann_size_AB, fp);
 			cudaMemcpy(ann_device_AB,lf, ann_size_AB * sizeof(unsigned int),cudaMemcpyHostToDevice);
 			fclose(fp);
-			FILE* fp2 = fopen( "/content/Deep-Image-Analogy-for-videos/output/files/patchba.txt" , "rb" );
+			FILE* fp2 = fopen( "patchba.txt" , "rb" );
 			unsigned int* lf2=(unsigned int*)malloc(ann_size_BA * sizeof(unsigned int));
 			fread(lf2, sizeof(unsigned int), ann_size_BA, fp2);
 			cudaMemcpy(ann_device_BA,lf2, ann_size_BA * sizeof(unsigned int),cudaMemcpyHostToDevice);
@@ -538,16 +504,16 @@ void DeepAnalogy::ComputeAnn() {
 		patchmatch << <blocksPerGridAB, threadsPerBlockAB >> >(Ndata_AP, Ndata_BP, Ndata_A, Ndata_B, ann_device_AB, annd_device_AB, params_device_AB);
 		patchmatch << <blocksPerGridBA, threadsPerBlockBA >> >(Ndata_B, Ndata_A, Ndata_BP, Ndata_AP, ann_device_BA, annd_device_BA, params_device_BA);
 		if(curr_layer == save_layer){
-			cout<<ann_size_AB<<endl;
-			cout<<"AB: "<<data_A_size[curr_layer].width<<"   "<<data_A_size[curr_layer].height<<endl;
-			cout<<ann_size_BA<<endl;
-			cout<<"BA: "<<data_B_size[curr_layer].width<<"   "<<data_B_size[curr_layer].height<<endl;
-			FILE* fp = fopen( "/content/Deep-Image-Analogy-for-videos/output/files/patchab.txt" , "wb" );
+			//cout<<ann_size_AB<<endl;
+			//cout<<"AB: "<<data_A_size[curr_layer].width<<"   "<<data_A_size[curr_layer].height<<endl;
+			//cout<<ann_size_BA<<endl;
+			//cout<<"BA: "<<data_B_size[curr_layer].width<<"   "<<data_B_size[curr_layer].height<<endl;
+			FILE* fp = fopen( "patchab.txt" , "wb" );
 			unsigned int* lf=(unsigned int*)malloc(ann_size_AB * sizeof(unsigned int));
 			cudaMemcpy(lf,ann_device_AB, ann_size_AB * sizeof(unsigned int),cudaMemcpyDeviceToHost);
 			fwrite(lf,sizeof(unsigned int), ann_size_AB, fp);
 			fclose(fp);
-			FILE* fp2 = fopen( "/content/Deep-Image-Analogy-for-videos/output/files/patchba.txt" , "wb" );
+			FILE* fp2 = fopen( "patchba.txt" , "wb" );
 			unsigned int* lf2=(unsigned int*)malloc(ann_size_BA * sizeof(unsigned int));
 			cudaMemcpy(lf2,ann_device_BA, ann_size_BA * sizeof(unsigned int),cudaMemcpyDeviceToHost);
 			fwrite(lf2,sizeof(unsigned int), ann_size_BA, fp2);
@@ -731,29 +697,28 @@ void DeepAnalogy::ComputeAnn() {
 		imwrite(path_output + fname, out);
 		//ours
 		for(int r=0;r<params.layers.size();r++){
-			string fo= "/content/Deep-Image-Analogy-for-videos/output/files/fileap"+to_string(r)+".txt";
-			cout<<fo<<endl;
+			string fo= "fileap"+to_string(r)+".txt";
 			FILE* fp = fopen( fo.c_str() , "wb" );
 			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
 			cudaMemcpy(lf,data_AP[r], data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
 			cout<<"Layer: "<<r<<"  channel:  "<<data_A_size[r].channel<<"  width: "<<data_A_size[r].width<<"  hight: "<<data_A_size[r].height<<endl;
 			fwrite(lf, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp);
 			fclose(fp);
-			fo= "/content/Deep-Image-Analogy-for-videos/output/files/fileb"+to_string(r)+".txt";
+			fo= "fileb"+to_string(r)+".txt";
 			FILE* fp2 = fopen( fo.c_str() , "wb" );
 			float* lf2=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
 			cudaMemcpy(lf2,data_B[r], data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
 			cout<<"Layer: "<<r<<"  channel:  "<<data_B_size[r].channel<<"  width: "<<data_B_size[r].width<<"  hight: "<<data_B_size[r].height<<endl;
 			fwrite(lf2, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp2);
 			fclose(fp2);
-			fo= "/content/Deep-Image-Analogy-for-videos/output/files/filea"+to_string(r)+".txt";
+			fo= "filea"+to_string(r)+".txt";
 			FILE* fp3 = fopen( fo.c_str() , "wb" );
 			float* lf3=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
 			cudaMemcpy(lf3,data_A[r], data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
 			cout<<"Layer: "<<r<<"  channel:  "<<data_A_size[r].channel<<"  width: "<<data_A_size[r].width<<"  hight: "<<data_A_size[r].height<<endl;
 			fwrite(lf3, sizeof(float), data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height, fp3);
 			fclose(fp3);
-			fo= "/content/Deep-Image-Analogy-for-videos/output/files/filebp"+to_string(r)+".txt";
+			fo= "filebp"+to_string(r)+".txt";
 			FILE* fp4 = fopen( fo.c_str() , "wb" );
 			float* lf4=(float*)malloc(data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float));
 			cudaMemcpy(lf4,data_BP[r], data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height * sizeof(float),cudaMemcpyDeviceToHost);
