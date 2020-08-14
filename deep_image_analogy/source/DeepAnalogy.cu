@@ -731,9 +731,7 @@ void DeepAnalogy::ComputeAnn() {
 		imwrite(path_output + fname, out);
 		//ours
 		for(int r=0;r<params.layers.size();r++){
-			char or=r+'0';
 			string fo= "/content/Deep-Image-Analogy-for-videos/output/files/fileap"+to_string(r)+".txt";
-			//FILE* fp = fopen( "fileap"+or+".txt" , "wb" );
 			cout<<fo<<endl;
 			FILE* fp = fopen( fo.c_str() , "wb" );
 			float* lf=(float*)malloc(data_A_size[r].channel * data_A_size[r].width * data_A_size[r].height * sizeof(float));
