@@ -53,12 +53,12 @@ def copyfiles(path1,path2):
         a function for copying the feature maps and patches of the starting frame
     '''
     shutil.copyfile(path1+"/filea0.txt",path2+"/filea0.txt")
-    shutil.copyfile(paht1+"/filea1.txt",path2+"/filea1.txt")
+    shutil.copyfile(path1+"/filea1.txt",path2+"/filea1.txt")
     shutil.copyfile(path1+"/filea2.txt",path2+"/filea2.txt")
     shutil.copyfile(path1+"/filea3.txt",path2+"/filea3.txt")
     shutil.copyfile(path1+"/filea4.txt",path2+"/filea4.txt")
     shutil.copyfile(path1+"/filea5.txt",path2+"/filea5.txt")
-    shutil.copyfile(path+"/fileap0.txt",path2+"/fileap0.txt")
+    shutil.copyfile(path1+"/fileap0.txt",path2+"/fileap0.txt")
     shutil.copyfile(path1+"/fileap1.txt",path2+"/fileap1.txt")
     shutil.copyfile(path1+"/fileap2.txt",path2+"/fileap2.txt")
     shutil.copyfile(path1+"/fileap3.txt",path2+"/fileap3.txt")
