@@ -5,6 +5,8 @@ import sys
 import subprocess
 import shutil
 import time
+import array
+import numpy as np
 def read_tensor(filename):
     with open(filename, 'rb') as f:
         data = f.read()
