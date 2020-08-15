@@ -4,7 +4,7 @@ int main(int argc, char** argv) {
 
 	DeepAnalogy dp;
 
-	if (argc!=15) {
+	/*if (argc!=15) {
 
 		string model = "C:/Users/User/Downloads/Deep-Image-Analogy-master/Deep-Image-Analogy-master/windows/deep_image_analogy/models/";
 	
@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 		dp.ComputeAnn();
 		
 	}
-	else{
+	else{*/
 		dp.SetModel(argv[1]);
 		dp.SetA(argv[2]);
 		dp.SetBPrime(argv[3]);
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 		}
 		dp.LoadInputs();
 		dp.ComputeAnn();
-	}
+	//}
 
 
 
