@@ -248,7 +248,7 @@ void DeepAnalogy::ComputeAnn() {
 
 
 	int ann_size_AB, ann_size_BA;//should be assigned later
-	int *params_host, *params_device_AB, *params_device_BA,*optic_data;
+	int *params_host, *params_device_AB, *params_device_BA;
 	unsigned int *ann_device_AB, *ann_host_AB, *ann_device_BA, *ann_host_BA;
 	float *annd_device_AB, *annd_host_AB, *annd_device_BA, *annd_host_BA;
 
