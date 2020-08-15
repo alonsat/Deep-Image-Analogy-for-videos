@@ -2,6 +2,7 @@
 import os
 import cv2
 import sys
+import torch
 import subprocess
 import shutil
 import time
