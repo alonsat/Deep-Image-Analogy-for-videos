@@ -5,6 +5,49 @@ import sys
 import subprocess
 import shutil
 import time
+def read_tensor(filename):
+    with open(filename, 'rb') as f:
+        data = f.read()
+    arr = array.array('f')
+    arr.frombytes(data)
+    return torch.tensor(arr, dtype=torch.float)
+def write_tensor(filename, tens):
+    with open(filename, 'wb') as f:
+        arr = array.array('f')
+        arr.fromlist(list(tens.numpy()))
+        arr.tofile(f)
+def update_layers(frame_num,img_dim,SIZES,frames_folder_output):
+  img_dim_inv= img_dim[1],img_dim[0]
+  for layer in [0,1,2,3,4,5]:
+    dim=(SIZES[layer][1],SIZES[layer][2]) #13,26
+    inv_dim=dim[1],dim[0]
+
+
+    opticalflow=read_tensor('/content/Deep-Image-Analogy-for-videos/flows/opticalflow_%d'%frame_num).view(img_dim[0], img_dim[1], 2)
+    opticalflow=opticalflow.to(dtype=torch.long)
+    
+    pre_layer = read_tensor(frames_folder_output+"/files/fileap%d.txt"%layer).view(SIZES[layer])
+    
+    pre_layer_fit_dim=cv2.resize(pre_layer.permute(1,2,0).numpy(),img_dim_inv,interpolation=cv2.INTER_NEAREST) #25,50,512
+    
+    pre_layer_torch= (torch.FloatTensor(pre_layer_fit_dim)).unsqueeze(0).to('cpu') #1, 25,50,512
+    
+
+    
+    '''opticalflow=cv2.resize(np.array(opticalflow),(dim[1],dim[0]),interpolation=cv2.INTER_NEAREST) 
+    opticalflow[:,:, 0]=np.floor(opticalflow[:,:, 0]*dim[1]/(img_dim[1]))
+    opticalflow[:,:, 1]=np.floor(opticalflow[:,:, 1]*dim[0]/(img_dim[0]))'''
+    
+    post_layer = pre_layer_torch[:, opticalflow[:,:, 1], opticalflow[:,:, 0], :].view(pre_layer_torch.size())
+
+
+    post_layer_back=cv2.resize(post_layer[0].numpy(),inv_dim,interpolation=cv2.INTER_NEAREST)
+    post_layer_back=torch.FloatTensor(post_layer_back).permute(2,0,1)
+
+
+
+
+    write_tensor('fileap%d.txt'%layer,torch.tensor(post_layer_back).reshape(-1))
 def copyfiles(path1,path2):
     '''
         a function for copying the feature maps and patches of the starting frame
@@ -69,8 +112,10 @@ def remfiles(frames_folder_output):
 
 
 
-def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output):
+def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
     '''a function that runs deep image analogy for videos starting form start frame until the last frame '''
+    img_dim= (160,330)
+    SIZES = ((512, 13, 26), (512, 25, 51), (256, 50, 102), (128, 100 , 203), (64, 200, 405), (3, 200, 405))
     for count in range(startframe,NumberOfFrames):
       if(count>0 and recursive_flag): 
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
@@ -98,14 +143,17 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
           print("FAIL")
       print(time.time()-starttime)
       os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
-      if(count==startframe):
+      if count==startframe:
           copyfiles(frames_folder_output+"/files",frames_folder_output+"/n")
-def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output):
+      if Flag_Flow:
+          if count!=NumberOfFrames-1:
+              update_layers(count+1,img_dim,SIZES,frames_folder_output)
+def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
 
     for count in range(startframe-1,-1,-1):
-      if(count>0 and recursive_flag):
+      if count>0 and recursive_flag:
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count+1)
-          if(semi_recursive):
+          if semi_recursive:
               recursive_flag=False
           
       p1=exe_path
@@ -117,7 +165,7 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
       p7='1'
       p8='3'
       p9='0'
-      if(count==0):
+      if count==0:
           p10='0'
           p11='0'
           p12='3'        
@@ -126,7 +174,7 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
           p11='3'
           p12='3'
       starttime=time.time()
-      if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12)):
+      if os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12):
           print("FAIL")
       print(time.time()-starttime)
       os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
@@ -142,6 +190,7 @@ if __name__ == "__main__":
     startframe=0 #the start frame that we use (if different from 0 then we run from it in both directions)
     recursive_flag=True #recursive flag for running the algorithm in recursive and semi recursive (first fram recursion) ways
     semi_recursive=True #flag to mark that you run semi recursive
+    Flag_Flow=True #flag to mark if we use optical flow
 
     if not os.path.exists(frames_folder_input):
         os.mkdir(frames_folder_input)
@@ -169,12 +218,12 @@ if __name__ == "__main__":
 
     height, width=img_BP.shape[0],img_BP.shape[1]
     
-    deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output)
+    deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow)
     
     remfiles(frames_folder_output+"/files")
 
     copyfiles(frames_folder_output+"/n",frames_folder_output+"/files")
-
+        
     deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output)
     
     #convert the frames to video
@@ -188,7 +237,7 @@ if __name__ == "__main__":
     count = 0
     while True:
       img=cv2.imread(frames_folder_output+"/frame{}.png".format(count))
-      if(img is None):
+      if img is None:
         break
       out.write(img)
       print('write a new frame: ', success, count)
