@@ -726,6 +726,11 @@ void DeepAnalogy::ComputeAnn() {
 			fwrite(lf4, sizeof(float), data_B_size[r].channel * data_B_size[r].width * data_B_size[r].height, fp4);
 			fclose(fp4);
 		}
+		string fo= "/content/Deep-Image-Analogy-for-videos/sizes.txt";
+		FILE* fp = fopen( fo.c_str() , "w" );
+		string outto=to_string(data_A_size[0].channel)+","+to_string(data_A_size[0].height)+","+to_string(data_A_size[0].width)+"\n"+to_string(data_A_size[1].channel)+","+to_string(data_A_size[1].height)+","+to_string(data_A_size[1].width)+"\n"+to_string(data_A_size[2].channel)+","+to_string(data_A_size[2].height)+","+to_string(data_A_size[2].width)+"\n"+to_string(data_A_size[3].channel)+","+to_string(data_A_size[3].height)+","+to_string(data_A_size[3].width)+"\n"+to_string(data_A_size[4].channel)+","+to_string(data_A_size[4].height)+","+to_string(data_A_size[4].width)+"\n"+to_string(data_A_size[5].channel)+","+to_string(data_A_size[5].height)+","+to_string(data_A_size[5].width);
+		fprintf(fp,"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",data_A_size[0].channel,data_A_size[0].height,data_A_size[0].width,data_A_size[1].channel,data_A_size[1].height,data_A_size[1].width,data_A_size[2].channel,data_A_size[2].height,data_A_size[2].width,data_A_size[3].channel,data_A_size[3].height,data_A_size[3].width,data_A_size[4].channel,data_A_size[4].height,data_A_size[4].width,data_A_size[5].channel,data_A_size[5].height,data_A_size[5].width);
+		fclose(fp);
 		//end of ours
 		if (photoTransfer)
 		{
