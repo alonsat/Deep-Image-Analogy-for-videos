@@ -56,10 +56,13 @@ if __name__ == '__main__':
 
     opticalflow=cv2.calcOpticalFlowFarneback(img_BP_gray,img_A_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0) #optical flow B to A
 
-    for i in range(opticalflow.shape[0]):
-	  for j in range(opticalflow.shape[1]):
-	    opticalflow[i,j,0]=np.clip(opticalflow[i,j,0]+j,0,opticalflow.shape[1]-1)
-	    opticalflow[i,j,1]=np.clip(opticalflow[i,j,1]+i,0,opticalflow.shape[0]-1)
+    i_range=torch.arange(0,opticalflow.shape[0])
+    j_range=torch.arange(0,opticalflow.shape[1])
+    i_ten, j_ten=torch.meshgrid(i_range,j_range)
+    opticalflow_torch=torch.Tensor(opticalflow)
+    opticalflow_torch[:,:,0]=torch.clamp(opticalflow_torch[:,:,0]+j_ten,0,opticalflow.shape[1]-1)
+    opticalflow_torch[:,:,1]=torch.clamp(opticalflow_torch[:,:,1]+i_ten,0,opticalflow.shape[0]-1)
+    opticalflow=opticalflow_torch.numpy()
   
     opticalflow=(opticalflow).astype(int)
     print(frame_num, opticalflow.shape)
