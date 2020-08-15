@@ -118,7 +118,7 @@ def remfiles(frames_folder_output):
 def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
     '''a function that runs deep image analogy for videos starting form start frame until the last frame '''
     img_dim= (160,330)
-    SIZES = ((512, 13, 26), (512, 25, 51), (256, 50, 102), (128, 100 , 203), (64, 200, 405), (3, 200, 405))
+    os.system("python /content/Deep-Image-Analogy-for-videos/compute_flows.py")
     for count in range(startframe,NumberOfFrames):
       if(count>0 and recursive_flag): 
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
@@ -149,6 +149,12 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
       if count==startframe:
           copyfiles(frames_folder_output+"/files",frames_folder_output+"/n")
       if Flag_Flow:
+          SIZES=[]
+          with open('/content/Deep-Image-Analogy-for-videos/sizes.txt') as f:
+              for line in f:
+                  nums=[int(x) for x in line.split()]
+                  for i in range(6):
+                      SIZES.append((nums[3*i],nums[3*i+1],nums[3*i+2]))
           if count!=NumberOfFrames-1:
               update_layers(count+1,img_dim,SIZES,frames_folder_output)
 def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
