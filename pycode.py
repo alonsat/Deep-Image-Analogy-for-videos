@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     copyfiles(frames_folder_output+"/n",frames_folder_output+"/files")
         
-    deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output)
+    deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow)
     
     #convert the frames to video
 
