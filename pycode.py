@@ -117,7 +117,9 @@ def remfiles(frames_folder_output):
 
 def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
     '''a function that runs deep image analogy for videos starting form start frame until the last frame '''
-    img_dim= (160,330)
+    img0=cv2.imread('/content/Deep-Image-Analogy-for-videos/frames_inp/frame0.png')
+    img_dim= img0.shape[0], img0.shape[1]
+    
     os.system("python /content/Deep-Image-Analogy-for-videos/compute_flows.py")
     for count in range(startframe,NumberOfFrames):
       if(count>0 and recursive_flag): 
@@ -191,15 +193,15 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
 if __name__ == "__main__":
     exe_path="/content/Deep-Image-Analogy-for-videos/demo"#path to executable
     path_to_models="/content/Deep-Image-Analogy-for-videos/deep_image_analogy/models/"#path to models folder
-    input_video_path="/content/Deep-Image-Analogy-for-videos/eagle.mp4" #path to video
+    input_video_path=sys.argv[1] #path to video
     frames_folder_input="/content/Deep-Image-Analogy-for-videos/frames_inp" #folder to contain the frames of the original video
-    image_semantic="/content/Deep-Image-Analogy-for-videos/fly.png" #path to style file
+    image_semantic=sys.argv[2] #path to style file
     frames_folder_output="/content/Deep-Image-Analogy-for-videos/output" #path to folder that would contatin the frames of the output video
-    output_video_path="/content/Deep-Image-Analogy-for-videos/output" #path for the output video
+    output_video_path=sys.argv[3] #path for the output video
     startframe=0 #the start frame that we use (if different from 0 then we run from it in both directions)
-    recursive_flag=True #recursive flag for running the algorithm in recursive and semi recursive (first fram recursion) ways
-    semi_recursive=True #flag to mark that you run semi recursive
-    Flag_Flow=True #flag to mark if we use optical flow
+    recursive_flag=sys.argv[4]=='True' #recursive flag for running the algorithm in recursive and semi recursive (first fram recursion) ways
+    semi_recursive=sys.argv[5]=='True' #flag to mark that you run semi recursive
+    Flag_Flow=sys.argv[6]=='True' #flag to mark if we use optical flow
 
     if not os.path.exists(frames_folder_input):
         os.mkdir(frames_folder_input)
@@ -242,7 +244,7 @@ if __name__ == "__main__":
     frame_width = temp_img.shape[1]
     frame_height = temp_img.shape[0]
     fourcc = cv2.VideoWriter_fourcc(*'VP90')
-    out = cv2.VideoWriter(output_video_path+"eagle.mp4", fourcc, fps, (frame_width, frame_height), isColor=True)
+    out = cv2.VideoWriter(output_video_path, fourcc, fps, (frame_width, frame_height), isColor=True)
     count = 0
     while True:
       img=cv2.imread(frames_folder_output+"/frame{}.png".format(count))
@@ -255,4 +257,4 @@ if __name__ == "__main__":
     print('%d frames were written' % count)
     print(output_video_path)
     out.release()
-    cv2.destroyAllWindows()
+ 
