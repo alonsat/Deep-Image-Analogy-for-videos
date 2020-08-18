@@ -8,6 +8,7 @@ import shutil
 import time
 import array
 import numpy as np
+import datetime as dt
 def read_tensor(filename):
     with open(filename, 'rb') as f:
         data = f.read()
@@ -143,10 +144,10 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
           p10='1'
           p11='3'
           p12='3'
-      starttime=time.time()
+      starttime=dt.datetime.now()
       if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12)):
           print("FAIL")
-      print(time.time()-starttime)
+      print('frame num. %d:'%count,dt.datetime.now()-starttime)
       os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
       if count==startframe:
           copyfiles(frames_folder_output+"/files",frames_folder_output+"/n")
@@ -184,10 +185,10 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
           p10='1'
           p11='3'
           p12='3'
-      starttime=time.time()
+      starttime=dt.datetime.now()
       if os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12):
           print("FAIL")
-      print(time.time()-starttime)
+      print('frame num. %d:'%count,dt.datetime.now()-starttime)
       os.rename(frames_folder_output+"/resultAB.png",frames_folder_output+"/frame{}.png".format(count))
       
 if __name__ == "__main__":
