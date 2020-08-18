@@ -123,13 +123,13 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
     
     os.system("python /content/Deep-Image-Analogy-for-videos/compute_flows.py")
     for count in range(startframe,NumberOfFrames):
-      if(count>0 and recursive_flag and !semi_recursive_flag): 
+      if(count>0 and recursive_flag and not(semi_recursive_flag)): 
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
-	  if(count>0 and semi_recursive_flag): 
+      if(count>0 and semi_recursive_flag):
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
           recursive_flag=False
-		  semi_recursive=False
-		  print("I AM RUNNING SEMI RECURSIVE")
+          semi_recursive=False
+          print("I AM RUNNING SEMI RECURSIVE")
       p1=exe_path
       p2=path_to_models
       p3='{}/frame{}.png'.format(frames_folder_input,count)
