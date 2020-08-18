@@ -39,8 +39,9 @@ if __name__ == '__main__':
   device='cuda'
 
   original_dia=0
-
-  img_dim= (160,330)
+  img0=cv2.imread('/content/Deep-Image-Analogy-for-videos/frames_inp/frame0.png')
+  img_dim= img0.shape[0], img0.shape[1]
+  
   img_dim_inv= img_dim[1],img_dim[0]
   path, dirs, files = next(os.walk("/content/Deep-Image-Analogy-for-videos/frames_inp"))
   for frame_num in range(1,len(files)):
