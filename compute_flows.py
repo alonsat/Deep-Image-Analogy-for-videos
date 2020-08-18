@@ -1,6 +1,5 @@
 import torch
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import datetime as dt
 import array
