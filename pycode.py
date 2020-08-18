@@ -125,8 +125,10 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
     for count in range(startframe,NumberOfFrames):
       if(count>0 and recursive_flag): 
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
-          if(semi_recursive):
-              recursive_flag=False
+	  if(count>0 and semi_recursive_flag): 
+          image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
+          recursive_flag=False
+		  semi_recursive=False
       p1=exe_path
       p2=path_to_models
       p3='{}/frame{}.png'.format(frames_folder_input,count)
@@ -158,7 +160,7 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
                   nums=[int(x) for x in line.split()]
                   for i in range(6):
                       SIZES.append((nums[3*i],nums[3*i+1],nums[3*i+2]))
-          if count!=NumberOfFrames-1:
+          if count!=NumberOfFrames-1 and  not(count==0 and semi_recursive==True) and  not (recursive_flag==True):
               update_layers(count+1,img_dim,SIZES,frames_folder_output)
 def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
 
