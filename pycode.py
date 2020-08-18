@@ -116,16 +116,16 @@ def remfiles(frames_folder_output):
 
 
 
-def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
+def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow,semi_recursive):
     '''a function that runs deep image analogy for videos starting form start frame until the last frame '''
     img0=cv2.imread('/content/Deep-Image-Analogy-for-videos/frames_inp/frame0.png')
     img_dim= img0.shape[0], img0.shape[1]
     
     os.system("python /content/Deep-Image-Analogy-for-videos/compute_flows.py")
     for count in range(startframe,NumberOfFrames):
-      if(count>0 and recursive_flag and not(semi_recursive_flag)): 
+      if(count>0 and recursive_flag and not(semi_recursive)): 
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
-      if(count==1 and semi_recursive_flag):
+      if(count==1 and semi_recursive):
           image_semantic='{}/frame{}.png'.format(frames_folder_output,count-1)
           recursive_flag=False
           #semi_recursive=False
@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
     height, width=img_BP.shape[0],img_BP.shape[1]
     
-    deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow)
+    deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow,semi_recursive)
     
     remfiles(frames_folder_output+"/files")
 
