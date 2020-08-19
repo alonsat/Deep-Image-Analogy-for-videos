@@ -183,11 +183,11 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
       if count==0:
           p10='0'
           p11='0'
-          p12=sys.argv[10]        
+          p12=sys.argv[11]        
       else:
-          p10='1'
-          p11=sys.argv[10]
-          p12=sys.argv[10]
+          p10=sys.argv[10]
+          p11=sys.argv[11]
+          p12=sys.argv[11]
       starttime=dt.datetime.now()
       if os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12):
           print("FAIL")
