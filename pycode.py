@@ -202,9 +202,17 @@ if __name__ == "__main__":
     image_semantic=sys.argv[2] #path to style file
     frames_folder_output="/content/Deep-Image-Analogy-for-videos/output" #path to folder that would contatin the frames of the output video
     output_video_path=sys.argv[3] #path for the output video
-    startframe=0 #the start frame that we use (if different from 0 then we run from it in both directions)
-    recursive_flag=sys.argv[4]=='True' #recursive flag for running the algorithm in recursive and semi recursive (first fram recursion) ways
-    semi_recursive=sys.argv[5]=='True' #flag to mark that you run semi recursive
+    startframe=0 #the start frame that we use
+    is_two_sided=sys.argv[5]==='True' # a flag to signify if we want to run the algorithm in a two sided way starting from an arbitrary frame
+    if int(sys.argv[4])==1:
+        recursive_flag=True #recursive flag for running the algorithm in recursive way
+        semi_recursive=False
+    elif int(sys.argv[4])==2:
+        recursive_flag=False 
+        semi_recursive=True #a flag for running the algorithm in a semi recursive (first frame recursive) way
+    else:
+        recursive_flag=False
+        semi_recursive=False
     Flag_Flow=sys.argv[6]=='True' #flag to mark if we use optical flow
 
     if not os.path.exists(frames_folder_input):
@@ -238,8 +246,8 @@ if __name__ == "__main__":
     remfiles(frames_folder_output+"/files")
 
     copyfiles(frames_folder_output+"/n",frames_folder_output+"/files")
-        
-    #deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow)
+    if is_two_sided:
+        deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow)
     
     #convert the frames to video
 
