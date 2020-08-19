@@ -4,6 +4,7 @@ import numpy as np
 import datetime as dt
 import array
 import os
+import sys
 
 def write_loc_tensor(filename, tens):
     with open(filename, 'wb') as f:
@@ -43,6 +44,12 @@ if __name__ == '__main__':
   img_dim= img0.shape[0], img0.shape[1]
   
   img_dim_inv= img_dim[1],img_dim[0]
+
+  if(len(next(os.walk("/content/Deep-Image-Analogy-for-videos/flows"))[2])>0):
+    #if we already have files in flow
+    print('flows were already generated! skipping this part!')
+    sys.exit()
+
   path, dirs, files = next(os.walk("/content/Deep-Image-Analogy-for-videos/frames_inp"))
   for frame_num in range(1,len(files)):
     img_A=cv2.resize(cv2.imread('/content/Deep-Image-Analogy-for-videos/frames_inp/frame%d.png'%(frame_num-1)),img_dim_inv,interpolation=cv2.INTER_CUBIC)
