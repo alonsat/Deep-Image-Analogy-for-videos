@@ -203,7 +203,7 @@ if __name__ == "__main__":
     frames_folder_output="/content/Deep-Image-Analogy-for-videos/output" #path to folder that would contatin the frames of the output video
     output_video_path=sys.argv[3] #path for the output video
     startframe=0 #the start frame that we use
-    is_two_sided=sys.argv[5]==='True' # a flag to signify if we want to run the algorithm in a two sided way starting from an arbitrary frame
+    is_two_sided=sys.argv[5]=='True' # a flag to signify if we want to run the algorithm in a two sided way starting from an arbitrary frame
     if int(sys.argv[4])==1:
         recursive_flag=True #recursive flag for running the algorithm in recursive way
         semi_recursive=False
