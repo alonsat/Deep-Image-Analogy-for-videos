@@ -136,17 +136,17 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
       p4=image_semantic
       p5=frames_folder_output+"/"
       p6='0'
-      p7='1'
-      p8='3'
-      p9='0'
-      if(count==0):
+      p7=(sys.argv[7])
+      p8=(sys.argv[8])
+      p9=(sys.argv[9])
+      if count==0:
           p10='0'
           p11='0'
-          p12='3'        
+          p12=sys.argv[11]        
       else:
-          p10='1'
-          p11='3'
-          p12='3'
+          p10=sys.argv[10]
+          p11=sys.argv[11]
+          p12=sys.argv[11]
       starttime=dt.datetime.now()
       if(os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12)):
           print("FAIL")
