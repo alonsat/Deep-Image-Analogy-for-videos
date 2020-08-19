@@ -161,7 +161,7 @@ def deep_image_video_analogy_forward(startframe,NumberOfFrames,exe_path,path_to_
                   nums=[int(x) for x in line.split()]
                   for i in range(6):
                       SIZES.append((nums[3*i],nums[3*i+1],nums[3*i+2]))
-          if count!=NumberOfFrames-1:
+          if count!=NumberOfFrames-1:# and  not(count==0 and semi_recursive) and  not (recursive_flag):
               update_layers(count+1,img_dim,SIZES,frames_folder_output)
 def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to_models,frames_folder_input,image_semantic,recursive_flag,frames_folder_output,Flag_Flow):
 
@@ -177,17 +177,17 @@ def deep_image_video_analogy_backward(startframe,NumberOfFrames,exe_path,path_to
       p4=image_semantic
       p5=frames_folder_output
       p6='0'
-      p7='1'
-      p8='3'
-      p9='0'
+      p7=(sys.argv[7])
+      p8=(sys.argv[8])
+      p9=(sys.argv[9])
       if count==0:
           p10='0'
           p11='0'
-          p12='3'        
+          p12=sys.argv[10]        
       else:
           p10='1'
-          p11='3'
-          p12='3'
+          p11=sys.argv[10]
+          p12=sys.argv[10]
       starttime=dt.datetime.now()
       if os.system(p1+" "+p2+" "+p3+" "+p4+" "+p5+" "+p6+" "+p7+" "+p8+" "+p9+" "+p10+" "+p11+" "+p12):
           print("FAIL")
