@@ -263,7 +263,7 @@ if __name__ == "__main__":
       if img is None:
         break
       out.write(img)
-      print('write a new frame: ', success, count)
+      print('wrote frame: ', count)
       count += 1
 
     print('%d frames were written' % count)
