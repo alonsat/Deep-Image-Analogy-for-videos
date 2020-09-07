@@ -22,6 +22,6 @@ example:
 <b>Input image:</b>
 
 <img src="https://i.ibb.co/6BCWQbp/4e57xk.gif" alt="4e57xk" border="0" />
-<b>Outout:</b>
+<b>Output:</b>
 
 <img src="https://i.ibb.co/3v2GGn2/4e56r6.gif" alt="4e56r6" border="0" />
