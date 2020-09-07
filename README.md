@@ -16,10 +16,10 @@ In this work we aim to extend this method to visual attribute transfer between i
 #example
 <b>Input video:</b>
 
-<img src="https://i.ibb.co/6BCWQbp/4e57xk.gif">
+<img src="https://i.ibb.co/Y0CHLWp/bird.jpg" alt="bird" border="0" />
 <b>Input image:</b>
 
-<img src="https://i.ibb.co/Y0CHLWp/bird.jpg">
+<img src="https://i.ibb.co/6BCWQbp/4e57xk.gif" alt="4e57xk" border="0" />
 <b>Outout:</b>
 
 <img src="https://i.ibb.co/3v2GGn2/4e56r6.gif" alt="4e56r6" border="0" />
